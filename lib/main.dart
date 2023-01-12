@@ -50,20 +50,22 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _taxPercentageController =
       TextEditingController();
   final TextEditingController _contributionController = TextEditingController();
-
+  bool isRequesting = false;
   Uint8List? pdfFile;
 
   Future<void> _sendInformation() async {
     setState(() {
       pdfFile = null;
+      isRequesting = true;
     });
+    
     final String basePay = _basePayController.text;
     final String taxPercentage = _taxPercentageController.text;
     final String contribution = _contributionController.text;
 
     final http.Response response = await http.post(
-      Uri.http(
-        'localhost:3000',
+      Uri.https(
+        'pdf-sample-generator.onrender.com',
         '/genereate-pdf-report',
       ),
       headers: <String, String>{
@@ -79,10 +81,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     // Check if response is error
     if (response.statusCode == 200) {
-      Future<void>.delayed(const Duration(seconds: 1), () {
-        setState(() {
-          pdfFile = response.bodyBytes;
-        });
+      setState(() {
+        isRequesting = false;
+        pdfFile = response.bodyBytes;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Done')),
         );
@@ -199,15 +200,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Processing Data')),
-                            );
+                        onPressed: !isRequesting
+                            ? () {
+                                if (_formKey.currentState!.validate()) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Processing Data')),
+                                  );
 
-                            _sendInformation();
-                          }
-                        },
+                                  _sendInformation();
+                                }
+                              }
+                            : null,
                         child: const Text('Submit'),
                       ),
                     ),
