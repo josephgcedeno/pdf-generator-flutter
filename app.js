@@ -14,8 +14,11 @@ var options =
         "left": "40px",
         "bottom": "50px"
     },
-    "phantomPath": "./node_modules/phantomjs-prebuilt/bin/phantomjs"
-
+    childProcessOptions: {
+        env: {
+            OPENSSL_CONF: '/dev/null',
+        },
+    },
 };
 
 var app = express();
@@ -35,7 +38,7 @@ app.set('view engine', 'html');
 
 app.get('/', (req, res) => {
 
-    res.send('Hello Pitik html-pdf generator updated with BufferResult');
+    res.send('Hello Pitik html-pdf generator updated with BufferResult with childProcessOptions and remove phantom js path.');
 
 });
 
@@ -59,6 +62,7 @@ app.post("/genereate-pdf-report", (req, res) => {
 
     pdf.create(htmlToString, options).toBuffer(function (err, result) {
         if (err) {
+            console.log(err);
             return console.log(err);
         }
         else {
