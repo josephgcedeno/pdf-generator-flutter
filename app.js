@@ -35,7 +35,7 @@ app.set('view engine', 'html');
 
 app.get('/', (req, res) => {
 
-    res.send('Hello Pitik html-pdf generator update');
+    res.send('Hello Pitik html-pdf generator updated with toFile');
 
 });
 
