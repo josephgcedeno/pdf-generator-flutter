@@ -62,12 +62,9 @@ app.post("/genereate-pdf-report", (req, res) => {
             return console.log(err);
         }
         else {
-
             var datafile = fs.readFileSync(`./public/uploads/pdf_file.pdf`);
             res.header('content-type', 'application/pdf');
             res.send(datafile);
-            console.log('andito ba');
-
         }
     });
 });
