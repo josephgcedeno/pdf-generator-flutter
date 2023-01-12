@@ -57,14 +57,13 @@ app.post("/genereate-pdf-report", (req, res) => {
     const params = req.body;
     const htmlToString = formatData(params);
 
-    pdf.create(htmlToString, options).toFile(function (err, result) {
+    pdf.create(htmlToString, options).toBuffer(function (err, result) {
         if (err) {
             return console.log(err);
         }
         else {
-            var datafile = fs.readFileSync(result.filename);
             res.header('content-type', 'application/pdf');
-            res.send(datafile);
+            res.send(result);
         }
     });
 });
